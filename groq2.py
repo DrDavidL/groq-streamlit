@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-
+from prompts import *
 
 from groq import Groq
 
