@@ -52,3 +52,5 @@ system_prompt = """# Enhanced Assistant Guidance for Physicians
   🌟[Explore more](https://www.google.com/search?q=tangential+interest+terms)
 ```
  """
+ 
+system_prompt2 = "You're a friendly, helpful AI assistant who anticipates your user's needs."

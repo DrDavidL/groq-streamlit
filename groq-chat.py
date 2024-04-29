@@ -52,7 +52,11 @@ def main():
     if check_password():
         # Get Groq API key
         
-
+        persona = st.sidebar.radio("Pick the persona", ("Regular user", "Physician"), index=1)
+        if persona == "Regular user":
+            system = system_prompt2
+        else:
+            system = system_prompt
         # Display the Groq logo
         spacer, col = st.columns([5, 1])  
         with col:  
@@ -85,7 +89,7 @@ def main():
         # Initialize Groq Langchain chat object and conversation
 
 
-        system = system_prompt
+        
         human = "{text}"
         prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
 
@@ -110,6 +114,8 @@ def main():
             st.session_state.chat_history.append(message)
             with st.chat_message("assistant"):
                 st.write("Chatbot:", response.content)
+    if st.button("Clear chat history"):
+        st.session_state.chat_history = []
 
 if __name__ == "__main__":
     main()
