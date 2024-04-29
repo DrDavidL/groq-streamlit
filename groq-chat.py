@@ -54,7 +54,7 @@ def main():
         
         persona = st.sidebar.radio("Pick the persona", ("Regular user", "Physician"), index=1)
         if persona == "Regular user":
-            system = system_prompt2
+            system = st.sidebar.text_area("Make your own system prompt or use as is:", value=system_prompt2)
         else:
             system = system_prompt
         # Display the Groq logo
