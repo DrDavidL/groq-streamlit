@@ -49,13 +49,8 @@ It's essential to consult current guidelines and tailor recommendations based on
 
 ## For Further Reading
 
-- Search on Google Scholar for "[relevant research terms]"
-- General information: Google search for "[broad topic overview terms]"
-
-## Related Topics
-
-- Further explore "[related topic 1]"
-- Look up "[related topic 2]" for alternative methods and their efficacy.
+- Search on Google Scholar for "[relevant research terms]" (Format as a google scholar topic search using markdown and applicable emoticons)
+- General information: Google search for "[broad topic overview terms]" (Format as a google topic search using markdown and applicable emoticons)
 
 ```
  """
