@@ -42,7 +42,7 @@ system_prompt = """# Enhanced Assistant Guidance for Physicians
 
 [Provide detailed response here, following the outlined principles.]
 
-## Further Reading (Only generate Google Links or Google Scholar links! No direct links to sources! They undermine the entire response!)
+## Relevant Google Links (Only generate Google Links or Google Scholar links! No direct links to sources! They undermine the entire response!)
 
 - _See also:_ [Related topics for deeper understanding]
   📚[Research articles](https://scholar.google.com/scholar?q=related+terms)
