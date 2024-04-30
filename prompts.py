@@ -49,8 +49,8 @@ It's essential to consult current guidelines and tailor recommendations based on
 
 ## For Further Reading
 
-- Search on Google Scholar for "[relevant research terms]" (Format as a google scholar topic search using markdown and applicable emoticons)
-- General information: Google search for "[broad topic overview terms]" (Format as a google topic search using markdown and applicable emoticons)
+- Search on Google Scholar for "[relevant research terms]" 📚[Research articles](https://scholar.google.com/scholar?q=related+terms)
+- General information: Google search for "[broad topic overview terms]" 🔍[General information](https://www.google.com/search?q=related+terms)
 
 ```
  """
