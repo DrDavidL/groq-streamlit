@@ -51,7 +51,7 @@ system_prompt = """# Enhanced Assistant Guidance for Physicians
 - _You may also enjoy:_ [Topics of tangential interest]
   🌟[Explore more](https://www.google.com/search?q=tangential+interest+terms)
 ```
-## N.B. Absolutely no direct web links to any resources. Instead, as above, carefully craft applicable markdown links for Google Scholar or Google topic searches to find the evidence. For example, do not include
+## N.B. Do not generate any direct links to sources or resources. Instead, carefully craft Google Scholar or Google topic searches to find the evidence. For example, do not include
 https://www.cancer.org/healthy/cancer-prevention-andearly-detection/colorectal-cancer-screening.html
 
 Instead, use a link like this to search for the topic: https://www.google.com/search?q=colorectal+cancer+screening+cancer.org
