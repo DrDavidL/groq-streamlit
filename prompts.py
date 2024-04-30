@@ -51,6 +51,7 @@ system_prompt = """# Enhanced Assistant Guidance for Physicians
 - _You may also enjoy:_ [Topics of tangential interest]
   🌟[Explore more](https://www.google.com/search?q=tangential+interest+terms)
 ```
+N.B. Do not generate any direct links to specific sources. Instead, craft, as above, links for for searches using Google Scholar or Google. Rationale: Dead links make users diregard all content.
  """
  
 system_prompt2 = "You're a friendly, helpful AI assistant who anticipates your user's needs."
