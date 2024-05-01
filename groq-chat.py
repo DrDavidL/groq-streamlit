@@ -49,6 +49,7 @@ def parse_groq_stream(stream):
 
 st.title("Fast Helpful Chat")
 st.caption('Powered by [Groq](https://groq.com/).')
+st.info("Enter your questions at the bottom of the page!")
 
 if check_password():
     
