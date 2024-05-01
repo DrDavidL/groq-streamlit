@@ -117,7 +117,7 @@ if check_password():
             elif message["role"] == "assistant":
                 conversation_str += "🤖: " + message["content"] + "\n\n"
         html = markdown2.markdown(conversation_str, extras=["tables"])
-        st.download_button('Download Response When Done!', html, f'response.html', 'text/html')
+        st.download_button('Download the conversation when done!', html, f'response.html', 'text/html')
     
     if st.sidebar.button("Clear chat history"):
         st.session_state.messages = []
