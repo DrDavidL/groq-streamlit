@@ -47,10 +47,10 @@ system_prompt = """# Enhanced Assistant Guidance for Physicians
 
 It's essential to consult current guidelines and tailor recommendations based on individual patient needs.
 
-## For Further Reading
+## For Further Reading (Only show Google Scholar and Google links!)
 
-- Search on Google Scholar for "[relevant research terms]" 📚[Research articles](https://scholar.google.com/scholar?q=related+terms)
-- General information: Google search for "[broad topic overview terms]" 🔍[General information](https://www.google.com/search?q=related+terms)
+- Google Scholar: 📚[Research articles](https://scholar.google.com/scholar?q=related+terms)
+- Google: 🔍[General information](https://www.google.com/search?q=related+terms)
 
 ```
  """

@@ -1,14 +1,18 @@
 import streamlit as st
-import os
+import markdown2
 from groq import Groq
-import random
 from prompts import *
 
-from langchain.chains import ConversationChain
-from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
 
+
+# Set OpenAI API key from Streamlit secrets
+groq_client = Groq(api_key = st.secrets['GROQ_API_KEY'])
+
+st.set_page_config(
+    page_title='Fast Helpful Chat',
+    page_icon='🌌',
+    initial_sidebar_state='expanded'
+)
 def check_password():
     """Returns `True` if the user had the correct password."""
 
@@ -37,106 +41,81 @@ def check_password():
     else:
         # Password correct.
         return True
+def parse_groq_stream(stream):
+    for chunk in stream:
+        if chunk.choices:
+            if chunk.choices[0].delta.content is not None:
+                yield chunk.choices[0].delta.content
 
+st.title("Fast Helpful Chat")
+st.caption('Powered by [Groq](https://groq.com/).')
 
-def main():
-    """
-    This function is the main entry point of the application. It sets up the Groq client, the Streamlit interface, and handles the chat interaction.
-    """
+if check_password():
     
-    # The title and greeting message of the Streamlit application
-    st.title("Chat with Groq API hosting!")
-    st.write("Hello! I'm your friendly Groq chatbot. I can help answer your questions, provide information, or just chat. I'm also super fast! Let's start our conversation!")
-
-
-    if check_password():
-        # Get Groq API key
-        
+    st.sidebar.title('Customization')
+    st.session_state.model = st.sidebar.selectbox(
+            'Choose a model',
+            ['llama3-70b-8192', 'llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it']
+        )
+    if st.sidebar.checkbox("Change personality? (Will clear history.)"):
         persona = st.sidebar.radio("Pick the persona", ("Regular user", "Physician"), index=1)
         if persona == "Regular user":
             system = st.sidebar.text_area("Make your own system prompt or use as is:", value=system_prompt2)
         else:
             system = system_prompt
-        # Display the Groq logo
-        spacer, col = st.columns([5, 1])  
-        with col:  
-            st.image('groqcloud_darkmode.png')
+        st.session_state.messages = [{"role": "system", "content": system}]
+    else:
+        st.session_state.messages = [{"role": "system", "content": system_prompt}]
+    if "response" not in st.session_state:
+        st.session_state["response"] = ""
 
-        # Add customization options to the sidebar
-        st.sidebar.title('Customization')
-        model = st.sidebar.selectbox(
-            'Choose a model',
-            ['llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it']
-        )
-        conversational_memory_length = st.sidebar.slider('Conversational memory length:', 1, 10, value = 5)
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role": "system", "content": system}]
 
-        memory=ConversationBufferWindowMemory(k=conversational_memory_length)
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            with st.chat_message(message["role"], avatar="👩‍💻"):
+                st.markdown(message["content"])
+        elif message["role"] == "assistant":
+            with st.chat_message(message["role"], avatar="🤖"):
+                st.markdown(message["content"])
 
-        # user_question = st.text_input("Ask a question:")
-        chat = ChatGroq(
-            groq_api_key = st.secrets['GROQ_API_KEY'], 
-            model_name=model
+    # Accept user input
+    if prompt := st.chat_input("What's up?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        # Display user message in chat message container
+        with st.chat_message("user", avatar="👩‍💻"):
+            st.markdown(prompt)
+            
+            # Display assistant response in chat message container
+        with st.chat_message("assistant", avatar="🤖"):        
+            stream = groq_client.chat.completions.create(
+                model=st.session_state["model"],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
+                temperature=0.0,
+                stream=True,
             )
-
-        # session state variable
-        if 'chat_history' not in st.session_state:
-            st.session_state.chat_history=[]
-        else:
-            for message in st.session_state.chat_history:
-                memory.save_context({'input':message['human']},{'output':message['AI']})
-
-
-        # Initialize Groq Langchain chat object and conversation
-
-
-        
-        human = "{text}"
-        prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-
-
-        
-        
-        
-        # conversation = ConversationChain(
-        #         llm=groq_chat,
-        #         memory=memory
-        # )
-
-        # If the user has asked a question,
-        if user_question := st.chat_input("Ask a question!"):
-            with st.chat_message("user"):
-                st.markdown(user_question)
-            chain = prompt | chat
-            response = chain.invoke({"text": f'prior conversation: {st.session_state.chat_history}\n\n New input: {user_question}'})
+            st.session_state.response = st.write_stream(parse_groq_stream(stream))
             
-            message = {'human':user_question,'AI':response.content}
             
-            st.session_state.chat_history.append(message)
-            with st.chat_message("assistant"):
-                st.write("Chatbot:", response.content)
-    if st.button("Clear chat history"):
-        st.session_state.chat_history = []
+            
+        st.session_state.messages.append({"role": "assistant", "content": st.session_state.response})
 
-if __name__ == "__main__":
-    main()
+    if st.session_state["response"]:
+        conversation_str = ""
+        for message in st.session_state.messages:
+            if message["role"] == "user":
+                conversation_str += "👩‍💻: " + message["content"] + "\n\n"
+            elif message["role"] == "assistant":
+                conversation_str += "🤖: " + message["content"] + "\n\n"
+        html = markdown2.markdown(conversation_str, extras=["tables"])
+        st.download_button('Download Response', html, f'response.html', 'text/html')
     
-    
-    
-        # if prompt := st.chat_input("Ask followup!"):
-        #     st.session_state.messages.append({"role": "user", "content": prompt})
-        #     with st.chat_message("user"):
-        #         st.markdown(prompt)
-
-        #     with st.chat_message("assistant"):
-        #         stream = client.chat.completions.create(
-        #             model=model3,
-        #             messages=[
-        #                 {"role": m["role"], "content": m["content"]}
-        #                 for m in st.session_state.messages
-        #             ],
-        #             stream=True,
-        #         )
-        #         response = st.write_stream(stream)
-        #         html = markdown2.markdown(response, extras=["tables"])
-        #         st.download_button('Download Followup Response', html, f'followup_response.html', 'text/html')
-        #     st.session_state.messages.append({"role": "assistant", "content": response})
+    if st.sidebar.button("Clear chat history"):
+        st.session_state.messages = []
