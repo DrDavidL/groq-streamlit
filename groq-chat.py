@@ -59,6 +59,9 @@ if check_password():
             'Choose a model',
             ['llama3-70b-8192', 'llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it']
         )
+        # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role": "system", "content": system_prompt}]
     if st.sidebar.checkbox("Change personality? (Will clear history.)"):
         persona = st.sidebar.radio("Pick the persona", ("Regular user", "Physician"), index=1)
         if persona == "Regular user":
@@ -66,14 +69,11 @@ if check_password():
         else:
             system = system_prompt
         st.session_state.messages = [{"role": "system", "content": system}]
-    else:
-        st.session_state.messages = [{"role": "system", "content": system_prompt}]
+        
     if "response" not in st.session_state:
         st.session_state["response"] = ""
 
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "system", "content": system}]
+
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
